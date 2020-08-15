@@ -265,8 +265,8 @@ namespace Quaver.Shared.Screens.Edit.UI.Menu
             {
                 if (ImGui.MenuItem("Resnap to current selected snap"))
                     Screen.ActionManager.ResnapAllNotes(Screen.BeatSnap.Value);
-                if (ImGui.MenuItem("Resnap to 1/48 snap"))
-                    Screen.ActionManager.ResnapAllNotes(48);
+                if (ImGui.MenuItem("Resnap to 1/16 and 1/12 snaps (1/192)"))
+                    Screen.ActionManager.ResnapAllNotes(192);
                 ImGui.EndMenu();
             }
 
