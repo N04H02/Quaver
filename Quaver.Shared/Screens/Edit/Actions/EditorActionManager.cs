@@ -7,6 +7,7 @@ using Quaver.API.Enums;
 using Quaver.API.Maps;
 using Quaver.API.Maps.Structures;
 using Quaver.Shared.Audio;
+using Quaver.Shared.Graphics.Notifications;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.Flip;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.Move;
@@ -439,38 +440,68 @@ namespace Quaver.Shared.Screens.Edit.Actions
         }
 
         /// <summary>
+        ///     Resnaps all notes in a given map to the closest of the specified snaps in the list.
         /// </summary>
-        public void ResnapAllNotes(int snap)
+        /// <remarks>
+        ///     The reason for working with multiple snaps is because using the first common multiple
+        ///     might not be accurate enough in terms of milliseconds. An example for this would be to
+        ///     resnap to 1/12 and 1/16 in a 200BPM map, which would result in a common multiple of 1/192.
+        ///     This results in a time of 1.56ms per snap, which is not accurate enough for our purposes.
+        /// </remarks>
+        /// <param name="snap">List of snaps to snap to</param>
+        public void ResnapAllNotes(List<int> snaps)
         {
             var notesToDelete = new List<HitObjectInfo>();
             var resnappedNotes = new List<HitObjectInfo>();
 
-            foreach (var note in WorkingMap.HitObjects)
+            var i = 0;
+
+            // Using AudioEngine.GetNearestSnapTimeFromTime is unreliable since it might not return the current snap
+            foreach (var tp in WorkingMap.TimingPoints)
             {
-                var deltaBackward = AudioEngine.GetNearestSnapTimeFromTime(WorkingMap, Direction.Backward, snap, note.StartTime) - note.StartTime;
-                var deltaForward = AudioEngine.GetNearestSnapTimeFromTime(WorkingMap, Direction.Forward, snap, note.StartTime) - note.StartTime;
+                var timingPointEnd = tp.StartTime + WorkingMap.GetTimingPointLength(tp);
+                var msPerSnaps = snaps.Select(s => tp.MillisecondsPerBeat / s).ToList();
 
-                // Note is exactly on snap, so the function returns the next snaps outside the current one
-                if (Math.Abs(deltaForward + deltaBackward) < 2)
-                    continue;
-
-                var timeDifference = (int)(deltaForward > -deltaBackward ? deltaBackward : deltaForward);
-
-                if (Math.Abs(timeDifference) >= 1)
+                while (timingPointEnd > WorkingMap.HitObjects[i].StartTime)
                 {
-                    notesToDelete.Add(note);
-                    var newNote = Helpers.ObjectHelper.DeepClone(note);
-                    newNote.StartTime += timeDifference;
-                    if (newNote.EndTime > 0)
-                        newNote.EndTime += timeDifference;
-                    resnappedNotes.Add(newNote);
+                    var note = WorkingMap.HitObjects[i];
+
+                    float smallestDelta = WorkingMap.HitObjects.Last().StartTime;
+                    foreach (var msPerSnap in msPerSnaps)
+                    {
+                        var deltaForward = (note.StartTime - tp.StartTime) % msPerSnap;
+                        var deltaBackward = deltaForward - msPerSnap;
+                        var delta = deltaForward < -deltaBackward ? deltaForward : deltaBackward;
+                        if (Math.Abs(delta) < Math.Abs(smallestDelta))
+                            smallestDelta = delta;
+                    }
+
+                    if (Math.Abs(smallestDelta) >= 1)
+                    {
+                        var newNote = Helpers.ObjectHelper.DeepClone(note);
+                        newNote.StartTime = (int)(newNote.StartTime - smallestDelta);
+                        if (newNote.EndTime > 0)
+                            newNote.EndTime = (int)(newNote.EndTime - smallestDelta);
+
+                        notesToDelete.Add(note);
+                        resnappedNotes.Add(newNote);
+                    }
+
+                    if (i < WorkingMap.HitObjects.Count)
+                        i++;
+                    else
+                        break;
                 }
             }
 
             if (notesToDelete.Count() > 0)
+            {
                 RemoveHitObjectBatch(notesToDelete);
-            if (resnappedNotes.Count() > 0)
                 PlaceHitObjectBatch(resnappedNotes);
+                NotificationManager.Show(NotificationLevel.Info, $"Resnapped {resnappedNotes.Count} notes");
+            }
+            else
+                NotificationManager.Show(NotificationLevel.Info, $"No notes to resnap");
         }
 
         /// <summary>
