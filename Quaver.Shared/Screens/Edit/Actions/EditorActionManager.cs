@@ -6,6 +6,7 @@ using MoonSharp.Interpreter.Interop;
 using Quaver.API.Enums;
 using Quaver.API.Maps;
 using Quaver.API.Maps.Structures;
+using Quaver.Shared.Audio;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.Flip;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.Move;
@@ -38,6 +39,8 @@ using Quaver.Shared.Screens.Edit.Actions.Timing.RemoveBatch;
 using Quaver.Shared.Screens.Edit.Actions.Timing.Reset;
 using Quaver.Shared.Screens.Edit.Components;
 using Wobble.Bindables;
+using Wobble.Graphics;
+using Wobble.Logging;
 
 namespace Quaver.Shared.Screens.Edit.Actions
 {
@@ -433,6 +436,41 @@ namespace Quaver.Shared.Screens.Edit.Actions
                 return;
 
             EditScreen.SelectedHitObjects.AddRange(existingHitObjects);
+        }
+
+        /// <summary>
+        /// </summary>
+        public void ResnapAllNotes(int snap)
+        {
+            var notesToDelete = new List<HitObjectInfo>();
+            var resnappedNotes = new List<HitObjectInfo>();
+
+            foreach (var note in WorkingMap.HitObjects)
+            {
+                var deltaBackward = AudioEngine.GetNearestSnapTimeFromTime(WorkingMap, Direction.Backward, snap, note.StartTime) - note.StartTime;
+                var deltaForward = AudioEngine.GetNearestSnapTimeFromTime(WorkingMap, Direction.Forward, snap, note.StartTime) - note.StartTime;
+
+                // Note is exactly on snap, so the function returns the next snaps outside the current one
+                if (Math.Abs(deltaForward + deltaBackward) < 2)
+                    continue;
+
+                var timeDifference = (int)(deltaForward > -deltaBackward ? deltaBackward : deltaForward);
+
+                if (Math.Abs(timeDifference) >= 1)
+                {
+                    notesToDelete.Add(note);
+                    var newNote = Helpers.ObjectHelper.DeepClone(note);
+                    newNote.StartTime += timeDifference;
+                    if (newNote.EndTime > 0)
+                        newNote.EndTime += timeDifference;
+                    resnappedNotes.Add(newNote);
+                }
+            }
+
+            if (notesToDelete.Count() > 0)
+                RemoveHitObjectBatch(notesToDelete);
+            if (resnappedNotes.Count() > 0)
+                PlaceHitObjectBatch(resnappedNotes);
         }
 
         /// <summary>

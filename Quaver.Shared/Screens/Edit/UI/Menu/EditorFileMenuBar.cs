@@ -261,6 +261,15 @@ namespace Quaver.Shared.Screens.Edit.UI.Menu
             if (ImGui.MenuItem("Apply Offset To Map"))
                 DialogManager.Show(new EditorApplyOffsetDialog(Screen));
 
+            if (ImGui.BeginMenu("Resnap All Notes"))
+            {
+                if (ImGui.MenuItem("Resnap to current selected snap"))
+                    Screen.ActionManager.ResnapAllNotes(Screen.BeatSnap.Value);
+                if (ImGui.MenuItem("Resnap to 1/48 snap"))
+                    Screen.ActionManager.ResnapAllNotes(48);
+                ImGui.EndMenu();
+            }
+
             if (ImGui.BeginMenu($"Apply Modifier To Map", Screen.Map.Game == MapGame.Quaver))
             {
                 if (ImGui.MenuItem("Mirror"))
