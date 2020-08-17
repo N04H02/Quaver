@@ -1,8 +1,0 @@
-{
-    "editor.formatOnPaste": false,
-    "editor.formatOnSave": false,
-    "editor.formatOnType": false,
-    "files.trimFinalNewlines": false,
-    "files.trimTrailingWhitespace": true,
-    "files.insertFinalNewline": false
-}
