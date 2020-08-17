@@ -116,6 +116,11 @@ namespace Quaver.Shared.Screens.Edit.Actions
         public event EventHandler<EditorHitObjectsMovedEventArgs> HitObjectsMoved;
 
         /// <summary>
+        ///     Event invoked when hitobjects have been resnapped
+        /// </summary>
+        public event EventHandler<EditorActionHitObjectsResnappedEventArgs> HitObjectsResnapped;
+
+        /// <summary>
         ///     Event invoked when a hitsound has been added to a group of objects
         /// </summary>
         public event EventHandler<EditorHitsoundAddedEventArgs> HitsoundAdded;
@@ -448,61 +453,8 @@ namespace Quaver.Shared.Screens.Edit.Actions
         ///     resnap to 1/12 and 1/16 in a 200BPM map, which would result in a common multiple of 1/192.
         ///     This results in a time of 1.56ms per snap, which is not accurate enough for our purposes.
         /// </remarks>
-        /// <param name="snap">List of snaps to snap to</param>
-        public void ResnapAllNotes(List<int> snaps)
-        {
-            var notesToDelete = new List<HitObjectInfo>();
-            var resnappedNotes = new List<HitObjectInfo>();
-
-            var i = 0;
-
-            // Using AudioEngine.GetNearestSnapTimeFromTime is unreliable since it might not return the current snap
-            foreach (var tp in WorkingMap.TimingPoints)
-            {
-                var timingPointEnd = tp.StartTime + WorkingMap.GetTimingPointLength(tp);
-                var msPerSnaps = snaps.Select(s => tp.MillisecondsPerBeat / s).ToList();
-
-                while (timingPointEnd > WorkingMap.HitObjects[i].StartTime)
-                {
-                    var note = WorkingMap.HitObjects[i];
-
-                    float smallestDelta = WorkingMap.HitObjects.Last().StartTime;
-                    foreach (var msPerSnap in msPerSnaps)
-                    {
-                        var deltaForward = (note.StartTime - tp.StartTime) % msPerSnap;
-                        var deltaBackward = deltaForward - msPerSnap;
-                        var delta = deltaForward < -deltaBackward ? deltaForward : deltaBackward;
-                        if (Math.Abs(delta) < Math.Abs(smallestDelta))
-                            smallestDelta = delta;
-                    }
-
-                    if (Math.Abs(smallestDelta) >= 1)
-                    {
-                        var newNote = Helpers.ObjectHelper.DeepClone(note);
-                        newNote.StartTime = (int)(newNote.StartTime - smallestDelta);
-                        if (newNote.EndTime > 0)
-                            newNote.EndTime = (int)(newNote.EndTime - smallestDelta);
-
-                        notesToDelete.Add(note);
-                        resnappedNotes.Add(newNote);
-                    }
-
-                    if (i < WorkingMap.HitObjects.Count)
-                        i++;
-                    else
-                        break;
-                }
-            }
-
-            if (notesToDelete.Count() > 0)
-            {
-                RemoveHitObjectBatch(notesToDelete);
-                PlaceHitObjectBatch(resnappedNotes);
-                NotificationManager.Show(NotificationLevel.Info, $"Resnapped {resnappedNotes.Count} notes");
-            }
-            else
-                NotificationManager.Show(NotificationLevel.Info, $"No notes to resnap");
-        }
+        /// <param name="snaps">List of snaps to snap to</param>
+        public void ResnapAllNotes(List<int> snaps) => Perform(new EditorActionResnapHitObjects(this, WorkingMap, snaps));
 
         /// <summary>
         ///     Detects the BPM of the map and returns the object instance
@@ -607,6 +559,9 @@ namespace Quaver.Shared.Screens.Edit.Actions
                     break;
                 case EditorActionType.ChangeScrollVelocityMultiplierBatch:
                     ScrollVelocityMultiplierBatchChanged?.Invoke(this, (EditorChangedScrollVelocityMultiplierBatchEventArgs)args);
+                    break;
+                case EditorActionType.ResnapHitObjects:
+                    HitObjectsResnapped?.Invoke(this, (EditorActionHitObjectsResnappedEventArgs)args);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
