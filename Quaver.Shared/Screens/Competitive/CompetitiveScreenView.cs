@@ -3,6 +3,8 @@ using Quaver.Shared.Assets;
 using Quaver.Shared.Graphics.Menu.Border;
 using Quaver.Shared.Helpers;
 using Quaver.Shared.Screens.Competitive.UI.Borders.Footer;
+using Quaver.Shared.Screens.Competitive.UI.RankDivisions;
+using Quaver.Shared.Screens.Competitive.UI.RatingPanels.User;
 using Wobble;
 using Wobble.Graphics;
 using Wobble.Graphics.Sprites;
@@ -31,6 +33,12 @@ namespace Quaver.Shared.Screens.Competitive
             CreateBackground();
             CreateHeader();
             CreateFooter();
+
+            new RatingPanelStatsContainer(1500, 100, 95, RankDivision.S)
+            {
+                Parent = Container,
+                Alignment = Alignment.MidCenter
+            };
         }
 
         public void CreateBackground() => Background = new BackgroundImage(UserInterface.Triangles, 0, false)

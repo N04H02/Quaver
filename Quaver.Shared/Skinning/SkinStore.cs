@@ -17,6 +17,7 @@ using MoreLinq.Extensions;
 using Quaver.API.Enums;
 using Quaver.Shared.Assets;
 using Quaver.Shared.Config;
+using Quaver.Shared.Screens.Competitive.UI.RankDivisions;
 using Quaver.Shared.Skinning.Menus;
 using Wobble;
 using Wobble.Assets;
@@ -242,6 +243,9 @@ namespace Quaver.Shared.Skinning
         /// </summary>
         internal Texture2D BattleRoyaleWarning { get; private set; }
 
+        internal Dictionary<RankDivision, Texture2D> RankDivisions { get; set; } =
+            new Dictionary<RankDivision, Texture2D>();
+
         /// <summary>
         ///     Sound effect elements.
         /// </summary>
@@ -338,6 +342,7 @@ namespace Quaver.Shared.Skinning
             LoadSkip();
             LoadComboAlert();
             LoadMultiplayerElements();
+            LoadRankDivisions();
             LoadSoundEffects();
         }
 
@@ -663,6 +668,29 @@ namespace Quaver.Shared.Skinning
             const string battleRoyaleWarning = "warning";
             BattleRoyaleWarning = LoadSingleTexture($"{multiplayerFolder}/{battleRoyaleWarning}"
                 ,$"Quaver.Resources/Textures/Skins/Shared/Multiplayer/{battleRoyaleWarning}.png");
+        }
+
+        private void LoadRankDivisions()
+        {
+            var rankDivisionsFolder = $"Quaver.Resources/Textures/UI/Competitive/RankDivisions";
+            RankDivisions[RankDivision.Unranked] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-unranked.png");
+            RankDivisions[RankDivision.D] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-d.png");
+            RankDivisions[RankDivision.DPlus] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-d-plus.png");
+            RankDivisions[RankDivision.CMinus] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-c-minus.png");
+            RankDivisions[RankDivision.C] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-c.png");
+            RankDivisions[RankDivision.CPlus] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-c-plus.png");
+            RankDivisions[RankDivision.BMinus] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-b-minus.png");
+            RankDivisions[RankDivision.B] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-b.png");
+            RankDivisions[RankDivision.BPlus] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-b-plus.png");
+            RankDivisions[RankDivision.AMinus] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-a-minus.png");
+            RankDivisions[RankDivision.A] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-a.png");
+            RankDivisions[RankDivision.APlus] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-a-plus.png");
+            RankDivisions[RankDivision.SMinus] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-s-minus.png");
+            RankDivisions[RankDivision.S] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-s.png");
+            RankDivisions[RankDivision.SPlus] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-s-plus.png");
+            RankDivisions[RankDivision.XMinus] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-x-minus.png");
+            RankDivisions[RankDivision.X] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-x.png");
+            RankDivisions[RankDivision.Star] = LoadSingleTexture(null, $"{rankDivisionsFolder}/rank-star.png");
         }
 
         /// <summary>
