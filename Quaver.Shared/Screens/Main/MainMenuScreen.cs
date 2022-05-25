@@ -12,6 +12,7 @@ using Quaver.Shared.Discord;
 using Quaver.Shared.Graphics.Notifications;
 using Quaver.Shared.Modifiers;
 using Quaver.Shared.Online;
+using Quaver.Shared.Screens.Competitive;
 using Quaver.Shared.Screens.Download;
 using Quaver.Shared.Screens.Downloading;
 using Quaver.Shared.Screens.Edit;
@@ -91,7 +92,7 @@ namespace Quaver.Shared.Screens.Main
 
             GameBase.Game.GlobalUserInterface.Cursor.Show(1);
             GameBase.Game.GlobalUserInterface.Cursor.Alpha = 1;
-            
+
             base.OnFirstUpdate();
         }
 
@@ -180,7 +181,13 @@ namespace Quaver.Shared.Screens.Main
         /// </summary>
         public void ExitToCompetitive()
         {
-            NotificationManager.Show(NotificationLevel.Warning, "Not implemented yet!");
+            // if (!OnlineManager.Connected)
+            // {
+            //     NotificationManager.Show(NotificationLevel.Error, "You must be logged in to play competitive.");
+            //     return;
+            // }
+
+            Exit(() => new CompetitiveScreen());
         }
 
         /// <summary>

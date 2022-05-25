@@ -23,6 +23,7 @@ namespace Quaver.Shared.Screens
         Multiplayer,
         Music,
         Theatre,
-        Initialization
+        Initialization,
+        Competitive
     }
 }

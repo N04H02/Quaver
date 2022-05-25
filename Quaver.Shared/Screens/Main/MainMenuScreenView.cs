@@ -181,6 +181,8 @@ namespace Quaver.Shared.Screens.Main
                     (o, e) => screen?.ExitToSinglePlayer()),
                 new NavigationButton(FontAwesome.Get(FontAwesomeIcon.fa_group_profile_users), "Multiplayer",
                     (o, e) => screen?.ExitToMultiplayer()),
+                new NavigationButton(FontAwesome.Get(FontAwesomeIcon.fa_crown), "Competitive",
+                    (o, e) => screen?.ExitToCompetitive()),
                 new NavigationButton(FontAwesome.Get(FontAwesomeIcon.fa_pencil), "Editor",
                     (o, e) => screen?.ExitToEditor()),
                 new NavigationButton(FontAwesome.Get(FontAwesomeIcon.fa_download_to_storage_drive), "Download Songs",
