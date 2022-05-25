@@ -2,6 +2,7 @@
 using Quaver.Shared.Assets;
 using Quaver.Shared.Graphics.Menu.Border;
 using Quaver.Shared.Helpers;
+using Quaver.Shared.Screens.Competitive.UI.Borders.Footer;
 using Wobble;
 using Wobble.Graphics;
 using Wobble.Graphics.Sprites;
@@ -21,20 +22,26 @@ namespace Quaver.Shared.Screens.Competitive
         /// </summary>
         private BackgroundImage Background { get; set; }
 
+        private MenuBorder Header { get; set; }
+
+        private MenuBorder Footer { get; set; }
+
         public CompetitiveScreenView(QuaverScreen screen) : base(screen)
         {
             CreateBackground();
-            new SpriteTextPlus(FontManager.GetWobbleFont(Fonts.LatoBold), "Competitive Screen", 24)
-            {
-                Parent = Container,
-                Alignment = Alignment.MidCenter,
-            };
+            CreateHeader();
+            CreateFooter();
         }
 
         public void CreateBackground() => Background = new BackgroundImage(UserInterface.Triangles, 0, false)
         {
             Parent = Container
         };
+
+        public void CreateHeader() => Header = new MenuHeaderMain() { Parent = Container };
+
+        public void CreateFooter() => Footer = new CompetitiveMenuFooter(CompetitiveScreen)
+            { Parent = Container, Alignment = Alignment.BotLeft };
 
         public override void Update(GameTime gameTime) => Container?.Update(gameTime);
 
