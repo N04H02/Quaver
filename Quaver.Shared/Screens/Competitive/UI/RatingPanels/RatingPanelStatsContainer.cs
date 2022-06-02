@@ -20,12 +20,21 @@ namespace Quaver.Shared.Screens.Competitive.UI.RatingPanels.User
             Size = new ScalableVector2(210, 45);
             Alpha = 0f;
 
+            var RankDivision = new Sprite()
+            {
+                Parent = this,
+                Alignment = Alignment.MidRight,
+                Size = new ScalableVector2(60, 36),
+                Image = SkinManager.Skin?.RankDivisions[rankDivision] ?? UserInterface.Logo
+            };
+
             StatsContainer = new Sprite()
             {
                 Parent = this,
-                Alignment = Alignment.MidLeft,
+                Alignment = Alignment.MidRight,
                 Alpha = 0f,
-                Size = new ScalableVector2(125, 45)
+                Size = new ScalableVector2(125, 45),
+                X = RankDivision.X - RankDivision.Width - 10
             };
 
             new SpriteTextPlus(FontManager.GetWobbleFont(Fonts.LatoBlack), Math.Round(rating).ToString(), 26)
@@ -40,14 +49,6 @@ namespace Quaver.Shared.Screens.Competitive.UI.RatingPanels.User
                 Parent = StatsContainer,
                 Alignment = Alignment.BotRight,
                 Tint = ColorHelper.HexToColor("#FFFFFF")
-            };
-
-            new Sprite()
-            {
-                Parent = this,
-                Alignment = Alignment.MidRight,
-                Size = new ScalableVector2(60, 36),
-                Image = SkinManager.Skin?.RankDivisions[rankDivision] ?? UserInterface.Logo
             };
         }
     }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Quaver.Shared.Assets;
+using Quaver.Shared.Graphics.Menu;
 using Quaver.Shared.Graphics.Menu.Border;
+using Quaver.Shared.Graphics.Notifications;
 using Quaver.Shared.Helpers;
 using Quaver.Shared.Screens.Competitive.UI.Borders.Footer;
 using Quaver.Shared.Screens.Competitive.UI.RankDivisions;
@@ -10,6 +12,7 @@ using Wobble.Graphics;
 using Wobble.Graphics.Sprites;
 using Wobble.Graphics.Sprites.Text;
 using Wobble.Graphics.UI;
+using Wobble.Graphics.UI.Buttons;
 using Wobble.Managers;
 using Wobble.Screens;
 
@@ -34,10 +37,11 @@ namespace Quaver.Shared.Screens.Competitive
             CreateHeader();
             CreateFooter();
 
-            new RatingPanelStatsContainer(1500, 100, 95, RankDivision.S)
+            new RatingPanelUser()
             {
                 Parent = Container,
-                Alignment = Alignment.MidCenter
+                Alignment = Alignment.MidCenter,
+                Y = -50
             };
         }
 
