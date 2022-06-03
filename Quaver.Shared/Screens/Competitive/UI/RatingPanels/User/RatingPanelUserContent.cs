@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using Microsoft.Xna.Framework.Graphics;
 using Quaver.Server.Client;
 using Quaver.Server.Common.Enums;

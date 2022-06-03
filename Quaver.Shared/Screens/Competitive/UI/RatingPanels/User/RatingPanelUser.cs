@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using Quaver.Shared.Assets;
 using Quaver.Shared.Helpers;
 using Quaver.Shared.Screens.Competitive.UI.RankDivisions;
@@ -9,14 +9,11 @@ namespace Quaver.Shared.Screens.Competitive.UI.RatingPanels.User
 {
     public class RatingPanelUser : RatingPanel
     {
-        public RatingPanelUser() : base()
+        public RatingPanelUser() : base() => new RatingPanelUserContent()
         {
-            new RatingPanelUserContent()
-            {
-                Parent = this,
-                Alignment = Alignment.MidLeft,
-                X = Padding,
-            };
-        }
+            Parent = this,
+            Alignment = Alignment.MidLeft,
+            X = Padding,
+        };
     }
 }
